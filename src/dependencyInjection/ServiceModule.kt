@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val serviceModule = module {
     single<OrderService> {
-        DefaultOrderService(get())
+        DefaultOrderService(get(), get(), get())
     }
 }

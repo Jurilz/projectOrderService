@@ -6,9 +6,7 @@ import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import com.fasterxml.jackson.databind.*
-import com.orderService.dependencyInjection.databaseModule
-import com.orderService.dependencyInjection.repositoryModule
-import com.orderService.dependencyInjection.serviceModule
+import com.orderService.dependencyInjection.*
 import com.orderService.routing.orderRoutes
 import io.ktor.jackson.*
 import io.ktor.client.*
@@ -22,7 +20,14 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     install(Koin){
-        modules(repositoryModule + databaseModule + serviceModule)
+        modules(
+            repositoryModule +
+                    databaseModule +
+                    handlerModule +
+                    eventBrokerModule +
+                    projectorModule +
+                    rabbitModule +
+                    serviceModule)
     }
     install(CORS) {
         method(HttpMethod.Options)

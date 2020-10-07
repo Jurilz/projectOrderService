@@ -9,6 +9,6 @@ val databaseModule = module {
         KMongo
             .createClient()
             .coroutine
-            .getDatabase("")
+            .getDatabase("orders")
     }
 }

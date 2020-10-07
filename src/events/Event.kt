@@ -12,7 +12,7 @@ import java.util.*
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = OrderEvent::class, name = "OrderEvent"),
-    JsonSubTypes.Type(value = CreateOrderEvent::class, name = "CreateOrderEvent")
+    JsonSubTypes.Type(value = OrderCreatedEvent::class, name = "CreateOrderEvent")
 )
 abstract class Event {
     var eventId: String = (UUID.randomUUID()).toString()
