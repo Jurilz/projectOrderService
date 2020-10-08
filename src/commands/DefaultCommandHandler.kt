@@ -1,34 +1,46 @@
 package com.orderService.commands
 
-import com.orderService.events.OrderCreatedEvent
-import com.orderService.events.Event
-import com.orderService.events.OrderEvent
+import com.orderService.domain.OrderState
+import com.orderService.events.*
 import com.orderService.messages.EventBroker
 import com.orderService.messages.EventTopic
-import com.orderService.messages.Subscriber
 
 class DefaultCommandHandler(private val eventBroker: EventBroker):
-    CommandHandler, Subscriber {
+    CommandHandler {
 
-    init {
-        eventBroker.subscribe(EventTopic.ORDER_COMMAND, this)
-    }
+//    init {
+//        eventBroker.subscribe(EventTopic.ORDER_COMMAND, this)
+//    }
 
     override suspend fun handle(command: Command) {
         when(command) {
             is CreateOrderCommand -> addOrder(command)
+            is UpdateOrderCommand -> updateOrder(command)
+            is DeleteOrderCommand -> deleteOrder(command)
         }
+    }
+
+    private suspend fun deleteOrder(command: DeleteOrderCommand) {
+        val deletedEvent: OrderEvent = buildOrderEvent(command.orderCommand)
+        val orderDeletedEvent = OrderDeletedEvent(deletedEvent)
+        eventBroker.publish(EventTopic.ORDER_SERVICE, orderDeletedEvent)
+    }
+
+    private suspend fun updateOrder(command: UpdateOrderCommand) {
+        val updateEvent: OrderEvent = buildOrderEvent(command.orderCommand)
+        val orderUpdatedEvent  = OrderUpdatedEvent(updateEvent)
+        eventBroker.publish(EventTopic.ORDER_SERVICE, orderUpdatedEvent)
     }
 
     private suspend fun addOrder(command: CreateOrderCommand) {
         val orderEvent: OrderEvent = buildOrderEvent(command.orderCommand)
-        val createOrderEvent = OrderCreatedEvent(orderEvent)
-        eventBroker.publish(EventTopic.ORDER_SERVICE, createOrderEvent)
+        val orderCreatedEvent = OrderCreatedEvent(orderEvent)
+        eventBroker.publish(EventTopic.ORDER_SERVICE, orderCreatedEvent)
     }
 
 
     private fun buildOrderEvent(orderCommand: OrderCommand): OrderEvent {
-        val newState: String = determineNewState()
+        val newState: String = determineNewState(orderCommand)
 
         val orderEvent = OrderEvent(
             orderId = orderCommand.orderId,
@@ -42,8 +54,11 @@ class DefaultCommandHandler(private val eventBroker: EventBroker):
         return orderEvent
     }
 
-    private fun determineNewState(): String {
-        TODO("Not yet implemented")
+    private fun determineNewState(orderCommand: OrderCommand): String {
+        return when(orderCommand.state) {
+            OrderState.pending.toString() -> OrderState.processedByOrderService.toString()
+            else -> orderCommand.state
+        }
     }
 
     override suspend fun handle(event: Event) {

@@ -6,12 +6,24 @@ import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import com.fasterxml.jackson.databind.*
+import com.orderService.commands.CommandHandler
+import com.orderService.commands.DefaultCommandHandler
 import com.orderService.dependencyInjection.*
+import com.orderService.events.DefaultEventHandler
+import com.orderService.events.EventHandler
+import com.orderService.messages.EventBroker
+import com.orderService.messages.EventTopic
+import com.orderService.rabbitMQ.RabbitProvider
+import com.orderService.repository.EventWriteRepository
+import com.orderService.repository.OrderReadRepository
 import com.orderService.routing.orderRoutes
+import com.orderService.services.DefaultOrderService
+import com.orderService.services.OrderService
 import io.ktor.jackson.*
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.inject
 
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -35,6 +47,9 @@ fun Application.module(testing: Boolean = false) {
         method(HttpMethod.Delete)
         method(HttpMethod.Patch)
         header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlAllowHeaders)
+        header(HttpHeaders.ContentType)
+        header(HttpHeaders.AccessControlAllowOrigin)
         header("MyCustomHeader")
         allowCredentials = true
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
@@ -50,6 +65,8 @@ fun Application.module(testing: Boolean = false) {
     val client = HttpClient(Apache) {
     }
 
+    initializeEventBroker()
+
     routing {
         orderRoutes()
         get("/") {
@@ -60,5 +77,18 @@ fun Application.module(testing: Boolean = false) {
             call.respond(mapOf("hello" to "world"))
         }
     }
+}
+
+fun Application.initializeEventBroker() {
+    val eventBroker: EventBroker by inject()
+    val rabbitMQProvider: RabbitProvider by inject()
+    val eventHandler: EventHandler by inject()
+    val orderService: OrderService by inject()
+    val commandHandler: CommandHandler by inject()
+    eventBroker.subscribe(EventTopic.ORDER_COMMAND, commandHandler)
+    eventBroker.subscribe(EventTopic.ORDER_SERVICE, orderService)
+    eventBroker.subscribe(EventTopic.PUBLISH_ORDER, rabbitMQProvider)
+    eventBroker.subscribe(EventTopic.ORDER_EVENT, eventHandler)
+
 }
 

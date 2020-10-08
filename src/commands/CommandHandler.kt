@@ -1,6 +1,8 @@
 package com.orderService.commands
 
-interface CommandHandler {
+import com.orderService.messages.Subscriber
+
+interface CommandHandler: Subscriber {
 
     suspend fun handle(command: Command)
 

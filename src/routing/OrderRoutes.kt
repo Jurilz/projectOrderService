@@ -15,6 +15,7 @@ fun Routing.orderRoutes() {
     val commandHandler: CommandHandler by inject()
     val orderService: OrderService by inject()
 
+
     route("/orders") {
         get {
             call.respond(orderService.getAll())
@@ -38,8 +39,20 @@ fun Routing.orderRoutes() {
             if (deleted != null) {
                 val deleteOrderCommand: DeleteOrderCommand = buildDeleteOrderCommand(deleted)
                 commandHandler.handle(deleteOrderCommand)
+                call.respond(deleted)
             } else {
                 call.respond(HttpStatusCode.NotFound)
+            }
+        }
+    }
+    route("{customerName}") {
+        get {
+            val name: String = call.parameters["customerName"]!!
+            val orders: List<Order>? = orderService.getByCustomerName(name)
+            if (orders == null) {
+                call.respond(HttpStatusCode.NotFound)
+            } else {
+                call.respond(orders)
             }
         }
     }
@@ -48,7 +61,7 @@ fun Routing.orderRoutes() {
 fun buildDeleteOrderCommand(deleted: Order): DeleteOrderCommand {
     val orderCommand = OrderCommand(
         orderId = deleted.orderId,
-        productName = deleted.product,
+        productName = deleted.productName,
         amount = deleted.amount,
         customerName = deleted.customerName,
         address = deleted.address,

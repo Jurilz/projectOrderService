@@ -3,8 +3,8 @@ package com.orderService.projectors
 import com.orderService.domain.Order
 import com.orderService.events.Event
 import com.orderService.events.OrderCreatedEvent
-import com.orderService.messages.EventBroker
-import com.orderService.messages.EventTopic
+import com.orderService.events.OrderDeletedEvent
+import com.orderService.events.OrderUpdatedEvent
 import com.orderService.repository.OrderReadRepository
 
 class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository): OrderProjector {
@@ -24,5 +24,22 @@ class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository
             orderCreatedEvent.orderEvent.state
         )
         orderReadRepository.insert(order)
+    }
+
+    override suspend fun updateOrder(orderUpdatedEvent: OrderUpdatedEvent) {
+        val updateOrder = Order(
+            orderId = orderUpdatedEvent.orderEvent.orderId,
+            productName = orderUpdatedEvent.orderEvent.productName,
+            amount = orderUpdatedEvent.orderEvent.amount,
+            customerName = orderUpdatedEvent.orderEvent.customerName,
+            address = orderUpdatedEvent.orderEvent.address,
+            latModified = orderUpdatedEvent.orderEvent.lastModified,
+            state = orderUpdatedEvent.orderEvent.state
+        )
+        orderReadRepository.update(updateOrder)
+    }
+
+    override suspend fun deleteOrder(orderDeletedEvent: OrderDeletedEvent) {
+        orderReadRepository.delete(orderDeletedEvent.orderEvent.orderId)
     }
 }

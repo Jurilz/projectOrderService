@@ -11,7 +11,7 @@ import com.rabbitmq.client.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
-class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvider, Subscriber {
+class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvider {
 
     private val mapper: ObjectMapper = jacksonObjectMapper()
     private val connectionFactory: ConnectionFactory
@@ -27,7 +27,7 @@ class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvi
     private final val ORDER_EVENT_KEY = "orderEvent"
 
     init {
-        eventBroker.subscribe(EventTopic.PUBLISH_ORDER, this)
+//        eventBroker.subscribe(EventTopic.PUBLISH_ORDER, this)
         connectionFactory = ConnectionFactory()
         val newConnection: Connection = this.connectionFactory.newConnection()
         channel = newConnection.createChannel()

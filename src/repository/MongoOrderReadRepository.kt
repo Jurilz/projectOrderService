@@ -1,5 +1,7 @@
 package com.orderService.repository
 
+import com.mongodb.client.result.DeleteResult
+import com.mongodb.client.result.UpdateResult
 import com.orderService.domain.Order
 import com.orderService.events.Event
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -20,5 +22,17 @@ class MongoOrderReadRepository(database: CoroutineDatabase): OrderReadRepository
 
     override suspend fun getById(orderId: String): Order? {
        return orderCollection.findOne(Order::orderId eq orderId)
+    }
+
+    override suspend fun update(order: Order): UpdateResult {
+        return orderCollection.updateOne(Order::orderId eq order.orderId, order)
+    }
+
+    override suspend fun delete(orderId: String): DeleteResult {
+        return orderCollection.deleteOne(Order::orderId eq orderId)
+    }
+
+    override suspend fun getByCustomerName(customerName: String): List<Order>? {
+        return orderCollection.find(Order::customerName eq customerName).toList()
     }
 }

@@ -1,6 +1,8 @@
 package com.orderService.events
 
-interface EventHandler {
+import com.orderService.messages.Subscriber
 
-    suspend fun handle(event: Event)
+interface EventHandler: Subscriber {
+
+    override suspend fun handle(event: Event)
 }

@@ -3,6 +3,8 @@ package com.orderService.services
 import com.orderService.domain.Order
 import com.orderService.events.Event
 import com.orderService.events.OrderCreatedEvent
+import com.orderService.events.OrderDeletedEvent
+import com.orderService.events.OrderUpdatedEvent
 import com.orderService.messages.EventBroker
 import com.orderService.messages.EventTopic
 import com.orderService.messages.Subscriber
@@ -13,11 +15,11 @@ class DefaultOrderService(
     private val eventWriteRepository: EventWriteRepository,
     private val orderReadRepository: OrderReadRepository,
     private val eventBroker: EventBroker
-): OrderService, Subscriber {
+): OrderService {
 
-    init {
-        eventBroker.subscribe(EventTopic.ORDER_SERVICE, this)
-    }
+//    init {
+//        eventBroker.subscribe(EventTopic.ORDER_SERVICE, this)
+//    }
 
     override suspend fun storeAndPublishOrderEvent(event: Event) {
         eventWriteRepository.insert(event)
@@ -28,6 +30,8 @@ class DefaultOrderService(
     override suspend fun handle(event: Event) {
         when(event) {
             is OrderCreatedEvent -> storeAndPublishOrderEvent(event)
+            is OrderUpdatedEvent -> storeAndPublishOrderEvent(event)
+            is OrderDeletedEvent -> storeAndPublishOrderEvent(event)
         }
     }
 
@@ -37,5 +41,9 @@ class DefaultOrderService(
 
     override suspend fun getById(orderId: String): Order? {
         return orderReadRepository.getById(orderId)
+    }
+
+    override suspend fun getByCustomerName(customerName: String): List<Order>? {
+        return orderReadRepository.getByCustomerName(customerName)
     }
 }

@@ -1,10 +1,11 @@
 package com.orderService.rabbitMQ
 
 import com.orderService.events.Event
+import com.orderService.messages.Subscriber
 
-interface RabbitProvider {
+interface RabbitProvider: Subscriber {
 
     fun declareAndBindEventQueue()
 
-    suspend fun handle(event: Event)
+    override suspend fun handle(event: Event)
 }
