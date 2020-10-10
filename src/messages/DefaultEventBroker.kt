@@ -12,7 +12,7 @@ class DefaultEventBroker: EventBroker {
     }
 
     override suspend fun publish(topic: EventTopic, event: Event) {
-        val subscribers = subscriberMap[topic]
+        val subscribers: ArrayList<Subscriber>? = subscriberMap[topic]
         if (subscribers != null) {
             for (subscriber: Subscriber in subscribers) {
                 subscriber.handle(event)
@@ -26,6 +26,4 @@ class DefaultEventBroker: EventBroker {
         }
         return subscriberMap[topic]!!
     }
-
-
 }

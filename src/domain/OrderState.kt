@@ -5,5 +5,6 @@ enum class OrderState {
     processedByOrderService,
     processedByWarehouse,
     readyToPick,
-    beeingDelivered
+    beeingDelivered,
+    canceled
 }

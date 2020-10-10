@@ -8,10 +8,6 @@ import com.orderService.messages.EventTopic
 class DefaultCommandHandler(private val eventBroker: EventBroker):
     CommandHandler {
 
-//    init {
-//        eventBroker.subscribe(EventTopic.ORDER_COMMAND, this)
-//    }
-
     override suspend fun handle(command: Command) {
         when(command) {
             is CreateOrderCommand -> addOrder(command)
@@ -20,26 +16,26 @@ class DefaultCommandHandler(private val eventBroker: EventBroker):
         }
     }
 
-    private suspend fun deleteOrder(command: DeleteOrderCommand) {
+    override suspend fun deleteOrder(command: DeleteOrderCommand) {
         val deletedEvent: OrderEvent = buildOrderEvent(command.orderCommand)
         val orderDeletedEvent = OrderDeletedEvent(deletedEvent)
         eventBroker.publish(EventTopic.ORDER_SERVICE, orderDeletedEvent)
     }
 
-    private suspend fun updateOrder(command: UpdateOrderCommand) {
+    override suspend fun updateOrder(command: UpdateOrderCommand) {
         val updateEvent: OrderEvent = buildOrderEvent(command.orderCommand)
         val orderUpdatedEvent  = OrderUpdatedEvent(updateEvent)
         eventBroker.publish(EventTopic.ORDER_SERVICE, orderUpdatedEvent)
     }
 
-    private suspend fun addOrder(command: CreateOrderCommand) {
+    override suspend fun addOrder(command: CreateOrderCommand) {
         val orderEvent: OrderEvent = buildOrderEvent(command.orderCommand)
         val orderCreatedEvent = OrderCreatedEvent(orderEvent)
         eventBroker.publish(EventTopic.ORDER_SERVICE, orderCreatedEvent)
     }
 
 
-    private fun buildOrderEvent(orderCommand: OrderCommand): OrderEvent {
+    override fun buildOrderEvent(orderCommand: OrderCommand): OrderEvent {
         val newState: String = determineNewState(orderCommand)
 
         val orderEvent = OrderEvent(
@@ -54,7 +50,7 @@ class DefaultCommandHandler(private val eventBroker: EventBroker):
         return orderEvent
     }
 
-    private fun determineNewState(orderCommand: OrderCommand): String {
+    override fun determineNewState(orderCommand: OrderCommand): String {
         return when(orderCommand.state) {
             OrderState.pending.toString() -> OrderState.processedByOrderService.toString()
             else -> orderCommand.state

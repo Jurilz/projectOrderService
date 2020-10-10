@@ -17,10 +17,6 @@ class DefaultOrderService(
     private val eventBroker: EventBroker
 ): OrderService {
 
-//    init {
-//        eventBroker.subscribe(EventTopic.ORDER_SERVICE, this)
-//    }
-
     override suspend fun storeAndPublishOrderEvent(event: Event) {
         eventWriteRepository.insert(event)
         eventBroker.publish(EventTopic.PUBLISH_ORDER, event)

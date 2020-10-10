@@ -40,6 +40,12 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
+    // Exposed
+    implementation "org.jetbrains.exposed:exposed-core:$exposed_version"
+    implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"
+    implementation "org.jetbrains.exposed:exposed-jdbc:$exposed_version"
+    //Postgresql
+    implementation "org.postgresql:postgresql:42.2.2"
     // Koin for Kotlin
     implementation "org.koin:koin-core:$koin_version"
     implementation "org.koin:koin-ktor:$koin_version"

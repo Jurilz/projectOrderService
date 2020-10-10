@@ -27,7 +27,6 @@ class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvi
     private final val ORDER_EVENT_KEY = "orderEvent"
 
     init {
-//        eventBroker.subscribe(EventTopic.PUBLISH_ORDER, this)
         connectionFactory = ConnectionFactory()
         val newConnection: Connection = this.connectionFactory.newConnection()
         channel = newConnection.createChannel()

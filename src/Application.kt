@@ -7,17 +7,12 @@ import io.ktor.routing.*
 import io.ktor.http.*
 import com.fasterxml.jackson.databind.*
 import com.orderService.commands.CommandHandler
-import com.orderService.commands.DefaultCommandHandler
 import com.orderService.dependencyInjection.*
-import com.orderService.events.DefaultEventHandler
 import com.orderService.events.EventHandler
 import com.orderService.messages.EventBroker
 import com.orderService.messages.EventTopic
 import com.orderService.rabbitMQ.RabbitProvider
-import com.orderService.repository.EventWriteRepository
-import com.orderService.repository.OrderReadRepository
 import com.orderService.routing.orderRoutes
-import com.orderService.services.DefaultOrderService
 import com.orderService.services.OrderService
 import io.ktor.jackson.*
 import io.ktor.client.*

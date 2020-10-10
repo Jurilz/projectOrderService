@@ -3,13 +3,7 @@ package com.orderService.events
 
 import com.orderService.projectors.OrderProjector
 
-class DefaultEventHandler(
-//    private val eventBroker: EventBroker,
-    private val orderProjector: OrderProjector): EventHandler {
-
-//    init {
-//        eventBroker.subscribe(EventTopic.ORDER_EVENT, this)
-//    }
+class DefaultEventHandler(private val orderProjector: OrderProjector): EventHandler {
 
     override suspend fun handle(event: Event) {
         when(event) {
