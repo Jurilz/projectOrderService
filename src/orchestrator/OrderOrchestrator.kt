@@ -1,8 +1,9 @@
 package com.orderService.orchestrator
 
 import com.orderService.commands.CreateOrderCommand
+import com.orderService.messages.Subscriber
 
-interface OrderOrchestrator {
+interface OrderOrchestrator: Subscriber {
 
-    fun orchestrateOrderPlacementSaga(createOrderCommand: CreateOrderCommand)
+    suspend fun orchestrateOrderPlacementSaga(createOrderCommand: CreateOrderCommand)
 }

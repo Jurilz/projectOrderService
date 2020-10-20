@@ -16,21 +16,19 @@ class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository
     }
 
     override suspend fun addOrder(orderCreatedEvent: OrderCreatedEvent) {
-        val newState: String = determineNewState(orderCreatedEvent.orderEvent)
-        val order: Order = Order(
+        val order = Order(
             orderCreatedEvent.orderEvent.orderId,
             orderCreatedEvent.orderEvent.productName,
             orderCreatedEvent.orderEvent.amount,
             orderCreatedEvent.orderEvent.customerName,
             orderCreatedEvent.orderEvent.address,
             orderCreatedEvent.orderEvent.lastModified,
-            newState
+            orderCreatedEvent.orderEvent.state
         )
         orderReadRepository.insert(order)
     }
 
     override suspend fun updateOrder(orderUpdatedEvent: OrderUpdatedEvent) {
-        val newState: String = determineNewState(orderUpdatedEvent.orderEvent)
         val updateOrder = Order(
             orderId = orderUpdatedEvent.orderEvent.orderId,
             productName = orderUpdatedEvent.orderEvent.productName,
@@ -38,20 +36,12 @@ class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository
             customerName = orderUpdatedEvent.orderEvent.customerName,
             address = orderUpdatedEvent.orderEvent.address,
             lastModified = orderUpdatedEvent.orderEvent.lastModified,
-            state = newState
+            state = orderUpdatedEvent.orderEvent.state
         )
         orderReadRepository.update(updateOrder)
     }
 
     override suspend fun deleteOrder(orderDeletedEvent: OrderDeletedEvent) {
         orderReadRepository.delete(orderDeletedEvent.orderEvent.orderId)
-    }
-
-    private fun determineNewState(event: OrderEvent): String {
-        return when(event.state) {
-            OrderState.pending.toString() -> OrderState.processedByOrderService.toString()
-            OrderState.processedByWarehouse.toString() -> OrderState.readyToPick.toString()
-            else -> event.state
-        }
     }
 }

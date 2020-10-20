@@ -5,7 +5,7 @@ import com.orderService.events.Event
 
 interface Subscriber {
 
-    suspend fun handle(event: Event)
+    suspend fun handleEvent(event: Event)
 
-    suspend fun handle(command: Command)
+    suspend fun handleCommand(command: Command)
 }

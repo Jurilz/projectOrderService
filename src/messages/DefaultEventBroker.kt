@@ -1,5 +1,6 @@
 package com.orderService.messages
 
+import com.orderService.commands.Command
 import com.orderService.events.Event
 
 class DefaultEventBroker: EventBroker {
@@ -11,11 +12,20 @@ class DefaultEventBroker: EventBroker {
         subscriberList.add(subscriber)
     }
 
-    override suspend fun publish(topic: EventTopic, event: Event) {
+    override suspend fun publishEvent(topic: EventTopic, event: Event) {
         val subscribers: ArrayList<Subscriber>? = subscriberMap[topic]
         if (subscribers != null) {
             for (subscriber: Subscriber in subscribers) {
-                subscriber.handle(event)
+                subscriber.handleEvent(event)
+            }
+        }
+    }
+
+    override suspend fun publishCommand(topic: EventTopic, command: Command) {
+        val subscribers: ArrayList<Subscriber>? = subscriberMap[topic]
+        if (subscribers != null) {
+            for (subscriber: Subscriber in subscribers) {
+                subscriber.handleCommand(command)
             }
         }
     }

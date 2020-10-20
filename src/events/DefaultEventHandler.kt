@@ -7,23 +7,18 @@ import com.orderService.events.orderEvents.OrderCreatedEvent
 import com.orderService.events.orderEvents.OrderDeletedEvent
 import com.orderService.events.orderEvents.OrderEvent
 import com.orderService.events.orderEvents.OrderUpdatedEvent
-import com.orderService.messages.DefaultEventBroker
 import com.orderService.projectors.OrderProjector
 
 class DefaultEventHandler(
     private val orderProjector: OrderProjector
 ): EventHandler {
 
-    override suspend fun handle(event: Event) {
+    override suspend fun handleEvent(event: Event) {
         when(event) {
             is OrderCreatedEvent -> orderProjector.addOrder(event)
             is OrderUpdatedEvent -> handleOrderUpdate(event)
             is OrderDeletedEvent -> orderProjector.deleteOrder(event)
         }
-    }
-
-    override suspend fun handle(command: Command) {
-        TODO("Not yet implemented")
     }
 
     private suspend fun handleOrderUpdate(event: OrderUpdatedEvent) {
@@ -34,16 +29,11 @@ class DefaultEventHandler(
     }
 
     private suspend fun deleteOrder(event: OrderUpdatedEvent) {
-        val deleteEvent = OrderEvent(
-            orderId = event.orderEvent.orderId,
-            productName = event.orderEvent.productName,
-            customerName = event.orderEvent.customerName,
-            amount = event.orderEvent.amount,
-            address = event.orderEvent.address,
-            state = event.orderEvent.state
-        )
-        deleteEvent.lastModified = event.lastModified
-        val deleteOrderEvent = OrderDeletedEvent(deleteEvent)
+        val deleteOrderEvent = OrderDeletedEvent(event.orderEvent)
         orderProjector.deleteOrder(deleteOrderEvent)
+    }
+
+    override suspend fun handleCommand(command: Command) {
+        TODO("Not yet implemented")
     }
 }

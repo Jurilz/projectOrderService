@@ -4,6 +4,7 @@ import com.orderService.events.Event
 import com.orderService.events.orderEvents.OrderCreatedEvent
 import com.orderService.events.orderEvents.OrderDeletedEvent
 import com.orderService.events.orderEvents.OrderUpdatedEvent
+import com.orderService.messages.Subscriber
 
 interface OrderProjector {
 

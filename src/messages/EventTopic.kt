@@ -1,8 +1,8 @@
 package com.orderService.messages
 
 enum class EventTopic {
-    ORDER_COMMAND,
-    ORDER_EVENT,
+    COMMAND_HANDLER,
+    EVENT_HANDLER,
     ORDER_SERVICE,
     PUBLISH_ORDER,
     ORDER_ORCHESTRATOR

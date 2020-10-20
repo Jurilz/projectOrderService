@@ -1,5 +1,6 @@
 package com.orderService.events.orderEvents
 
+import com.orderService.commands.OrderCommand
 import com.orderService.events.Event
 
 class OrderEvent(
@@ -10,3 +11,15 @@ class OrderEvent(
     val address: String,
     val state: String
 ): Event()
+
+fun OrderEvent.buildOrderEvent(state: String): OrderCommand {
+    return OrderCommand(
+        orderId = this.orderId,
+        productName = this.productName,
+        customerName = this.customerName,
+        amount = this.amount,
+        address = this.address,
+        state = state,
+        lastModified = this.lastModified
+    )
+}

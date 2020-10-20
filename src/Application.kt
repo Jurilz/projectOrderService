@@ -11,6 +11,7 @@ import com.orderService.dependencyInjection.*
 import com.orderService.events.EventHandler
 import com.orderService.messages.EventBroker
 import com.orderService.messages.EventTopic
+import com.orderService.orchestrator.OrderOrchestrator
 import com.orderService.rabbitMQ.RabbitProvider
 import com.orderService.routing.orderRoutes
 import com.orderService.services.OrderService
@@ -34,7 +35,8 @@ fun Application.module(testing: Boolean = false) {
                     eventBrokerModule +
                     projectorModule +
                     rabbitModule +
-                    serviceModule)
+                    serviceModule +
+                    orchestratorModule)
     }
     install(CORS) {
         method(HttpMethod.Options)
@@ -80,10 +82,12 @@ fun Application.initializeEventBroker() {
     val eventHandler: EventHandler by inject()
     val orderService: OrderService by inject()
     val commandHandler: CommandHandler by inject()
-    eventBroker.subscribe(EventTopic.ORDER_COMMAND, commandHandler)
+    val orderOrchestrator: OrderOrchestrator by inject()
+    eventBroker.subscribe(EventTopic.COMMAND_HANDLER, commandHandler)
     eventBroker.subscribe(EventTopic.ORDER_SERVICE, orderService)
     eventBroker.subscribe(EventTopic.PUBLISH_ORDER, rabbitMQProvider)
-    eventBroker.subscribe(EventTopic.ORDER_EVENT, eventHandler)
+    eventBroker.subscribe(EventTopic.EVENT_HANDLER, eventHandler)
+    eventBroker.subscribe(EventTopic.ORDER_ORCHESTRATOR, orderOrchestrator)
 
 }
 

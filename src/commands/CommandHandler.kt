@@ -4,6 +4,6 @@ import com.orderService.messages.Subscriber
 
 interface CommandHandler: Subscriber {
 
-    override suspend fun handle(command: Command)
+    override suspend fun handleCommand(command: Command)
 
 }

@@ -28,12 +28,12 @@ fun Routing.orderRoutes() {
         //authenticate {
         post {
             val createOrderCommand: CreateOrderCommand = call.receive<CreateOrderCommand>()
-            commandHandler.handle(createOrderCommand)
+            commandHandler.handleCommand(createOrderCommand)
             call.respond(createOrderCommand)
         }
         put {
             val updateOrderCommand: UpdateOrderCommand = call.receive<UpdateOrderCommand>()
-            commandHandler.handle(updateOrderCommand)
+            commandHandler.handleCommand(updateOrderCommand)
             call.respond(updateOrderCommand)
         }
     }
@@ -43,7 +43,7 @@ fun Routing.orderRoutes() {
             val deleted: Order? = orderService.getById(id)
             if (deleted != null) {
                 val deleteOrderCommand: DeleteOrderCommand = buildDeleteOrderCommand(deleted)
-                commandHandler.handle(deleteOrderCommand)
+                commandHandler.handleCommand(deleteOrderCommand)
                 call.respond(deleted)
             } else {
                 call.respond(HttpStatusCode.NotFound)

@@ -8,7 +8,7 @@ interface OrderService: Subscriber {
 
     suspend fun storeAndPublishOrderEvent(event: Event)
 
-    override suspend fun handle(event: Event)
+    override suspend fun handleEvent(event: Event)
 
     suspend fun getAll(): List<Order>
 
