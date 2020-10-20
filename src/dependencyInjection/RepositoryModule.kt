@@ -1,9 +1,6 @@
 package com.orderService.dependencyInjection
 
-import com.orderService.repository.EventWriteRepository
-import com.orderService.repository.MongoEventWriteRepository
-import com.orderService.repository.MongoOrderReadRepository
-import com.orderService.repository.OrderReadRepository
+import com.orderService.repository.*
 import org.koin.dsl.module
 
 /**
@@ -16,6 +13,6 @@ val repositoryModule = module {
     }
 
     single<OrderReadRepository> {
-        MongoOrderReadRepository(get())
+        PostgresOrderReadRepository(get())
     }
 }

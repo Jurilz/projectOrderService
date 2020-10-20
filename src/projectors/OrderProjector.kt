@@ -1,9 +1,9 @@
 package com.orderService.projectors
 
 import com.orderService.events.Event
-import com.orderService.events.OrderCreatedEvent
-import com.orderService.events.OrderDeletedEvent
-import com.orderService.events.OrderUpdatedEvent
+import com.orderService.events.orderEvents.OrderCreatedEvent
+import com.orderService.events.orderEvents.OrderDeletedEvent
+import com.orderService.events.orderEvents.OrderUpdatedEvent
 
 interface OrderProjector {
 

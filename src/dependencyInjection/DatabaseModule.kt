@@ -10,7 +10,7 @@ val databaseModule = module {
         KMongo
             .createClient()
             .coroutine
-            .getDatabase("orders")
+            .getDatabase("orderEvents")
     }
 
     single {

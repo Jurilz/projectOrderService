@@ -15,4 +15,6 @@ interface OrderService: Subscriber {
     suspend fun getById(orderId: String): Order?
 
     suspend fun getByCustomerName(customerName: String): List<Order>?
+
+    suspend fun getReadyToPick(): List<Order>?
 }

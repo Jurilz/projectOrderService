@@ -18,6 +18,11 @@ fun Routing.orderRoutes() {
 
     route("/orders") {
         get {
+            orderService.getReadyToPick()?.let {
+                    it1 -> call.respond(it1)
+            }
+        }
+        get("/ball") {
             call.respond(orderService.getAll())
         }
         //authenticate {
@@ -65,7 +70,7 @@ fun buildDeleteOrderCommand(deleted: Order): DeleteOrderCommand {
         amount = deleted.amount,
         customerName = deleted.customerName,
         address = deleted.address,
-        lastModified = deleted.latModified,
+        lastModified = deleted.lastModified,
         state = deleted.state
     )
     return DeleteOrderCommand(orderCommand)

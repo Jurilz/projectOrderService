@@ -2,12 +2,11 @@ package com.orderService.services
 
 import com.orderService.domain.Order
 import com.orderService.events.Event
-import com.orderService.events.OrderCreatedEvent
-import com.orderService.events.OrderDeletedEvent
-import com.orderService.events.OrderUpdatedEvent
+import com.orderService.events.orderEvents.OrderCreatedEvent
+import com.orderService.events.orderEvents.OrderDeletedEvent
+import com.orderService.events.orderEvents.OrderUpdatedEvent
 import com.orderService.messages.EventBroker
 import com.orderService.messages.EventTopic
-import com.orderService.messages.Subscriber
 import com.orderService.repository.EventWriteRepository
 import com.orderService.repository.OrderReadRepository
 
@@ -41,5 +40,9 @@ class DefaultOrderService(
 
     override suspend fun getByCustomerName(customerName: String): List<Order>? {
         return orderReadRepository.getByCustomerName(customerName)
+    }
+
+    override suspend fun getReadyToPick(): List<Order>? {
+        return orderReadRepository.getReadyToPick()
     }
 }

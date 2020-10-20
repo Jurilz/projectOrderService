@@ -6,6 +6,6 @@ data class Order(
     val amount: Int,
     val customerName: String,
     val address: String,
-    val latModified: String,
+    val lastModified: String,
     val state: String
 )
