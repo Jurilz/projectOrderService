@@ -16,11 +16,12 @@ class DefaultEventHandler(
     override suspend fun handleEvent(event: Event) {
         when(event) {
             is OrderCreatedEvent -> orderProjector.addOrder(event)
-            is OrderUpdatedEvent -> handleOrderUpdate(event)
+            is OrderUpdatedEvent -> orderProjector.updateOrder(event)
             is OrderDeletedEvent -> orderProjector.deleteOrder(event)
         }
     }
 
+    //TODO: remove
     private suspend fun handleOrderUpdate(event: OrderUpdatedEvent) {
         when(event.orderEvent.state) {
             OrderState.cancelationProccedByWarehouse.toString() -> deleteOrder(event)
@@ -28,6 +29,7 @@ class DefaultEventHandler(
         }
     }
 
+    //TODO: remove
     private suspend fun deleteOrder(event: OrderUpdatedEvent) {
         val deleteOrderEvent = OrderDeletedEvent(event.orderEvent)
         orderProjector.deleteOrder(deleteOrderEvent)

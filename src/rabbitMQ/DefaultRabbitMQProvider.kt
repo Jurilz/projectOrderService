@@ -6,15 +6,15 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.orderService.commands.Command
 import com.orderService.events.Event
 import com.orderService.events.orderEvents.OrderUpdatedEvent
-import com.orderService.messages.EventBroker
-import com.orderService.messages.EventTopic
+import com.orderService.messages.MessageBroker
+import com.orderService.messages.MessageTopic
 import com.rabbitmq.client.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
-class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvider {
+class DefaultRabbitMQProvider(private val messageBroker: MessageBroker): RabbitProvider {
 
     private val mapper: ObjectMapper = jacksonObjectMapper()
     private val connectionFactory: ConnectionFactory
@@ -31,6 +31,8 @@ class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvi
 
     init {
         connectionFactory = ConnectionFactory()
+        //TODO: look at this
+//        connectionFactory.host = "rabbitmq"
         val newConnection: Connection = this.connectionFactory.newConnection()
         channel = newConnection.createChannel()
         channel.exchangeDeclare(GENERAL_EXCHANGE, TYPE_DIRECT, true)
@@ -43,8 +45,8 @@ class DefaultRabbitMQProvider(private val eventBroker: EventBroker): RabbitProvi
             GlobalScope.async {
                 // TODO: wtf ???
                 when(event) {
-                    is OrderUpdatedEvent -> eventBroker.publishEvent(EventTopic.ORDER_ORCHESTRATOR, event)
-                    else -> eventBroker.publishEvent(EventTopic.EVENT_HANDLER, event)
+                    is OrderUpdatedEvent -> messageBroker.publishEvent(MessageTopic.ORDER_ORCHESTRATOR, event)
+                    else -> messageBroker.publishEvent(MessageTopic.EVENT_HANDLER, event)
                 }
             }
         }

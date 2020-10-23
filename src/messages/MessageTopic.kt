@@ -1,6 +1,6 @@
 package com.orderService.messages
 
-enum class EventTopic {
+enum class MessageTopic {
     COMMAND_HANDLER,
     EVENT_HANDLER,
     ORDER_SERVICE,

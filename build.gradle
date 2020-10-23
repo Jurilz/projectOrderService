@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenLocal()
     }
     
     dependencies {
@@ -8,12 +9,32 @@ buildscript {
     }
 }
 
+//plugins {
+//    id("com.github.johnrengelman.plugin-shadow") version "2.0.3"
+//}
+
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:6.0.0")
+    }
+}
+
+
 apply plugin: 'kotlin'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'com.orderService'
 version '0.0.1'
-mainClassName = "io.ktor.server.netty.EngineMain"
+
+application {
+    mainClassName = "io.ktor.server.netty.EngineMain"
+}
 
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
@@ -65,8 +86,14 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-server-core:$ktor_version"
     implementation "io.ktor:ktor-jackson:$ktor_version"
-    implementation "io.ktor:ktor-client-core:$ktor_version"
-    implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
-    implementation "io.ktor:ktor-client-apache:$ktor_version"
-    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
+    implementation("io.ktor:ktor-client-apache:$ktor_version")
+    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+}
+
+tasks {
+    shadowJar {
+        archiveFileName.set("order-service.jar")
+    }
 }

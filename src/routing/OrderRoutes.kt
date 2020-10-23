@@ -2,6 +2,7 @@ package com.orderService.routing
 
 import com.orderService.commands.*
 import com.orderService.domain.Order
+import com.orderService.domain.buildOrderCommand
 import com.orderService.services.OrderService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -37,12 +38,13 @@ fun Routing.orderRoutes() {
             call.respond(updateOrderCommand)
         }
     }
-    route("{id}") {
+    route("/orders/{id}") {
         delete {
             val id: String = call.parameters["id"]!!
             val deleted: Order? = orderService.getById(id)
             if (deleted != null) {
-                val deleteOrderCommand: DeleteOrderCommand = buildDeleteOrderCommand(deleted)
+                val deleteCommand: OrderCommand = deleted.buildOrderCommand()
+                val deleteOrderCommand = DeleteOrderCommand(deleteCommand)
                 commandHandler.handleCommand(deleteOrderCommand)
                 call.respond(deleted)
             } else {
@@ -50,7 +52,7 @@ fun Routing.orderRoutes() {
             }
         }
     }
-    route("{customerName}") {
+    route("/orders/{customerName}") {
         get {
             val name: String = call.parameters["customerName"]!!
             val orders: List<Order>? = orderService.getByCustomerName(name)
@@ -61,17 +63,4 @@ fun Routing.orderRoutes() {
             }
         }
     }
-}
-
-fun buildDeleteOrderCommand(deleted: Order): DeleteOrderCommand {
-    val orderCommand = OrderCommand(
-        orderId = deleted.orderId,
-        productName = deleted.productName,
-        amount = deleted.amount,
-        customerName = deleted.customerName,
-        address = deleted.address,
-        lastModified = deleted.lastModified,
-        state = deleted.state
-    )
-    return DeleteOrderCommand(orderCommand)
 }

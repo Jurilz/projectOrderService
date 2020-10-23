@@ -1,12 +1,8 @@
 package com.orderService.projectors
 
 import com.orderService.domain.Order
-import com.orderService.domain.OrderState
 import com.orderService.events.*
-import com.orderService.events.orderEvents.OrderCreatedEvent
-import com.orderService.events.orderEvents.OrderDeletedEvent
-import com.orderService.events.orderEvents.OrderEvent
-import com.orderService.events.orderEvents.OrderUpdatedEvent
+import com.orderService.events.orderEvents.*
 import com.orderService.repository.OrderReadRepository
 
 class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository): OrderProjector {
@@ -16,28 +12,12 @@ class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository
     }
 
     override suspend fun addOrder(orderCreatedEvent: OrderCreatedEvent) {
-        val order = Order(
-            orderCreatedEvent.orderEvent.orderId,
-            orderCreatedEvent.orderEvent.productName,
-            orderCreatedEvent.orderEvent.amount,
-            orderCreatedEvent.orderEvent.customerName,
-            orderCreatedEvent.orderEvent.address,
-            orderCreatedEvent.orderEvent.lastModified,
-            orderCreatedEvent.orderEvent.state
-        )
+        val order: Order = orderCreatedEvent.orderEvent.buildOrder()
         orderReadRepository.insert(order)
     }
 
     override suspend fun updateOrder(orderUpdatedEvent: OrderUpdatedEvent) {
-        val updateOrder = Order(
-            orderId = orderUpdatedEvent.orderEvent.orderId,
-            productName = orderUpdatedEvent.orderEvent.productName,
-            amount = orderUpdatedEvent.orderEvent.amount,
-            customerName = orderUpdatedEvent.orderEvent.customerName,
-            address = orderUpdatedEvent.orderEvent.address,
-            lastModified = orderUpdatedEvent.orderEvent.lastModified,
-            state = orderUpdatedEvent.orderEvent.state
-        )
+        val updateOrder: Order = orderUpdatedEvent.orderEvent.buildOrder()
         orderReadRepository.update(updateOrder)
     }
 

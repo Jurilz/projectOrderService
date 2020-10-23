@@ -3,16 +3,16 @@ package com.orderService.messages
 import com.orderService.commands.Command
 import com.orderService.events.Event
 
-class DefaultEventBroker: EventBroker {
+class DefaultMessageBroker: MessageBroker {
 
-    private val subscriberMap: HashMap<EventTopic, ArrayList<Subscriber>> = HashMap()
+    private val subscriberMap: HashMap<MessageTopic, ArrayList<Subscriber>> = HashMap()
 
-    override fun subscribe(topic: EventTopic, subscriber: Subscriber) {
+    override fun subscribe(topic: MessageTopic, subscriber: Subscriber) {
         val subscriberList: ArrayList<Subscriber> = getOrCreateSubscriberList(topic)
         subscriberList.add(subscriber)
     }
 
-    override suspend fun publishEvent(topic: EventTopic, event: Event) {
+    override suspend fun publishEvent(topic: MessageTopic, event: Event) {
         val subscribers: ArrayList<Subscriber>? = subscriberMap[topic]
         if (subscribers != null) {
             for (subscriber: Subscriber in subscribers) {
@@ -21,7 +21,7 @@ class DefaultEventBroker: EventBroker {
         }
     }
 
-    override suspend fun publishCommand(topic: EventTopic, command: Command) {
+    override suspend fun publishCommand(topic: MessageTopic, command: Command) {
         val subscribers: ArrayList<Subscriber>? = subscriberMap[topic]
         if (subscribers != null) {
             for (subscriber: Subscriber in subscribers) {
@@ -30,7 +30,7 @@ class DefaultEventBroker: EventBroker {
         }
     }
 
-    override fun getOrCreateSubscriberList(topic: EventTopic): ArrayList<Subscriber> {
+    override fun getOrCreateSubscriberList(topic: MessageTopic): ArrayList<Subscriber> {
         if (subscriberMap[topic] == null) {
             subscriberMap[topic] = ArrayList()
         }

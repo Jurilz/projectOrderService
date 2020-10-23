@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.*
 import com.orderService.commands.CommandHandler
 import com.orderService.dependencyInjection.*
 import com.orderService.events.EventHandler
-import com.orderService.messages.EventBroker
-import com.orderService.messages.EventTopic
+import com.orderService.messages.MessageBroker
+import com.orderService.messages.MessageTopic
 import com.orderService.orchestrator.OrderOrchestrator
 import com.orderService.rabbitMQ.RabbitProvider
 import com.orderService.routing.orderRoutes
@@ -77,17 +77,17 @@ fun Application.module(testing: Boolean = false) {
 }
 
 fun Application.initializeEventBroker() {
-    val eventBroker: EventBroker by inject()
+    val messageBroker: MessageBroker by inject()
     val rabbitMQProvider: RabbitProvider by inject()
     val eventHandler: EventHandler by inject()
     val orderService: OrderService by inject()
     val commandHandler: CommandHandler by inject()
     val orderOrchestrator: OrderOrchestrator by inject()
-    eventBroker.subscribe(EventTopic.COMMAND_HANDLER, commandHandler)
-    eventBroker.subscribe(EventTopic.ORDER_SERVICE, orderService)
-    eventBroker.subscribe(EventTopic.PUBLISH_ORDER, rabbitMQProvider)
-    eventBroker.subscribe(EventTopic.EVENT_HANDLER, eventHandler)
-    eventBroker.subscribe(EventTopic.ORDER_ORCHESTRATOR, orderOrchestrator)
+    messageBroker.subscribe(MessageTopic.COMMAND_HANDLER, commandHandler)
+    messageBroker.subscribe(MessageTopic.ORDER_SERVICE, orderService)
+    messageBroker.subscribe(MessageTopic.PUBLISH_ORDER, rabbitMQProvider)
+    messageBroker.subscribe(MessageTopic.EVENT_HANDLER, eventHandler)
+    messageBroker.subscribe(MessageTopic.ORDER_ORCHESTRATOR, orderOrchestrator)
 
 }
 

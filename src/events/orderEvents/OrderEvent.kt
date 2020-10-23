@@ -1,6 +1,7 @@
 package com.orderService.events.orderEvents
 
 import com.orderService.commands.OrderCommand
+import com.orderService.domain.Order
 import com.orderService.events.Event
 
 class OrderEvent(
@@ -21,5 +22,17 @@ fun OrderEvent.buildOrderEvent(state: String): OrderCommand {
         address = this.address,
         state = state,
         lastModified = this.lastModified
+    )
+}
+
+fun OrderEvent.buildOrder(): Order {
+    return Order(
+        orderId = this.orderId,
+        productName = this.productName,
+        amount = this.amount,
+        customerName = this.customerName,
+        address = this.customerName,
+        lastModified = this.lastModified,
+        state = this.state
     )
 }

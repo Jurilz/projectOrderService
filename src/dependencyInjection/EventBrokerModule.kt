@@ -1,11 +1,11 @@
 package com.orderService.dependencyInjection
 
-import com.orderService.messages.DefaultEventBroker
-import com.orderService.messages.EventBroker
+import com.orderService.messages.DefaultMessageBroker
+import com.orderService.messages.MessageBroker
 import org.koin.dsl.module
 
 val eventBrokerModule = module {
-    single<EventBroker> {
-        DefaultEventBroker()
+    single<MessageBroker> {
+        DefaultMessageBroker()
     }
 }

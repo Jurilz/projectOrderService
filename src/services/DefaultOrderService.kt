@@ -8,22 +8,30 @@ import com.orderService.events.orderEvents.OrderCreatedEvent
 import com.orderService.events.orderEvents.OrderDeletedEvent
 import com.orderService.events.orderEvents.OrderEvent
 import com.orderService.events.orderEvents.OrderUpdatedEvent
-import com.orderService.messages.EventBroker
-import com.orderService.messages.EventTopic
+import com.orderService.messages.MessageBroker
+import com.orderService.messages.MessageTopic
 import com.orderService.repository.EventWriteRepository
 import com.orderService.repository.OrderReadRepository
 
 class DefaultOrderService(
     private val eventWriteRepository: EventWriteRepository,
     private val orderReadRepository: OrderReadRepository,
-    private val eventBroker: EventBroker
+    private val messageBroker: MessageBroker
 ): OrderService {
 
     override suspend fun storeAndPublishOrderEvent(event: Event) {
         eventWriteRepository.insert(event)
-        eventBroker.publishEvent(EventTopic.PUBLISH_ORDER, event)
+        messageBroker.publishEvent(MessageTopic.PUBLISH_ORDER, event)
     }
 
+
+    override suspend fun handleCommand(command: Command) {
+        when(command) {
+            is CreateOrderCommand -> handleCreateOrderCommand(command)
+            is UpdateOrderCommand -> handleUpdateOrderCommand(command)
+            is DeleteOrderCommand -> handleDeleteOrderCommand(command)
+        }
+    }
 
     override suspend fun handleEvent(event: Event) {
         when(event) {
@@ -49,14 +57,6 @@ class DefaultOrderService(
         return orderReadRepository.getReadyToPick()
     }
 
-    override suspend fun handleCommand(command: Command) {
-        when(command) {
-            is CreateOrderCommand -> handleCreateOrderCommand(command)
-            is UpdateOrderCommand -> handleUpdateOrderCommand(command)
-            is DeleteOrderCommand -> handleDeleteOrderCommand(command)
-        }
-    }
-
     private suspend fun handleDeleteOrderCommand(command: DeleteOrderCommand) {
         val newState: String = determineNewState(command.orderCommand)
         val orderEvent: OrderEvent = command.orderCommand.buildOrderEvent(newState)
@@ -64,8 +64,8 @@ class DefaultOrderService(
         eventWriteRepository.insert(orderDeletedEvent)
 
         when(command.orderCommand.state) {
-            OrderState.readyToPick.toString() -> eventBroker.publishCommand(EventTopic.ORDER_ORCHESTRATOR, command)
-            OrderState.beingDelivered.toString() -> eventBroker.publishCommand(EventTopic.ORDER_ORCHESTRATOR, command)
+            OrderState.readyToPick.toString() -> messageBroker.publishCommand(MessageTopic.ORDER_ORCHESTRATOR, command)
+            OrderState.beingDelivered.toString() -> messageBroker.publishCommand(MessageTopic.ORDER_ORCHESTRATOR, command)
             else -> deleteOrder(command)
         }
     }
@@ -74,7 +74,7 @@ class DefaultOrderService(
         val newState: String = determineNewState(command.orderCommand)
         val deletedEvent: OrderEvent = command.orderCommand.buildOrderEvent(newState)
         val orderDeletedEvent = OrderDeletedEvent(deletedEvent)
-        eventBroker.publishEvent(EventTopic.ORDER_SERVICE, orderDeletedEvent)
+        messageBroker.publishEvent(MessageTopic.EVENT_HANDLER, orderDeletedEvent)
     }
 
     private suspend fun handleCreateOrderCommand(command: CreateOrderCommand) {
@@ -83,7 +83,7 @@ class DefaultOrderService(
         val orderCreatedEvent = OrderCreatedEvent(orderEvent)
         storeAndPublishOrderEvent(orderCreatedEvent)
 
-        eventBroker.publishCommand(EventTopic.ORDER_ORCHESTRATOR, command)
+        messageBroker.publishCommand(MessageTopic.ORDER_ORCHESTRATOR, command)
     }
 
     private suspend fun handleUpdateOrderCommand(command: UpdateOrderCommand) {
@@ -92,7 +92,7 @@ class DefaultOrderService(
         val orderUpdatedEvent = OrderUpdatedEvent(orderEvent)
         eventWriteRepository.insert(orderUpdatedEvent)
 
-        eventBroker.publishEvent(EventTopic.EVENT_HANDLER, orderUpdatedEvent)
+        messageBroker.publishEvent(MessageTopic.EVENT_HANDLER, orderUpdatedEvent)
     }
 
     private fun determineNewState(orderCommand: OrderCommand): String {
