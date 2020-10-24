@@ -1,0 +1,51 @@
+version: '3.1'
+
+services:
+
+  rabbitmq:
+    container_name: rabbitmq-project
+    image: rabbitmq:3-management
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    networks:
+      - project-network
+
+  mongo:
+    container_name: mongo-project
+    image: mongo:4
+    ports:
+      - "27017:27017"
+    networks:
+      - project-network
+
+  postgres:
+    container_name: postgres-project
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - project-network
+
+  order-service:
+    container_name: order-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - project-network
+    ports:
+      - "8100:8100"
+    depends_on:
+      - rabbitmq
+      - mongo
+      - postgres
+
+networks:
+  project-network:

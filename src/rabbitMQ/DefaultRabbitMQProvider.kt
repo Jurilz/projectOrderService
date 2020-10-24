@@ -32,7 +32,7 @@ class DefaultRabbitMQProvider(private val messageBroker: MessageBroker): RabbitP
     init {
         connectionFactory = ConnectionFactory()
         //TODO: look at this
-//        connectionFactory.host = "rabbitmq"
+        connectionFactory.host = "rabbitmq"
         val newConnection: Connection = this.connectionFactory.newConnection()
         channel = newConnection.createChannel()
         channel.exchangeDeclare(GENERAL_EXCHANGE, TYPE_DIRECT, true)

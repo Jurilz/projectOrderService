@@ -8,17 +8,17 @@ import org.litote.kmongo.reactivestreams.KMongo
 val databaseModule = module {
     single {
         KMongo
-            .createClient()
-//            .createClient("mongodb://mongo:27017")
+//            .createClient()
+            .createClient("mongodb://mongo:27017")
             .coroutine
             .getDatabase("orderEvents")
     }
 
     single {
         Database
-//            .connect("jdbc:postgresql://postgres:5432/orders", driver = "org.postgresql.Driver",
-//                user = "postgres", password = "postgres")
-            .connect("jdbc:postgresql://localhost:5432/orders", driver = "org.postgresql.Driver",
+            .connect("jdbc:postgresql://postgres:5432/postgres", driver = "org.postgresql.Driver",
                 user = "postgres", password = "postgres")
+//            .connect("jdbc:postgresql://localhost:5432/orders", driver = "org.postgresql.Driver",
+//                user = "postgres", password = "postgres")
     }
 }
