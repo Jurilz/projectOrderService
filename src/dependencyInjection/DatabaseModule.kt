@@ -16,7 +16,7 @@ val databaseModule = module {
 
     single {
         Database
-            .connect("jdbc:postgresql://postgres:5432/postgres", driver = "org.postgresql.Driver",
+            .connect("jdbc:postgresql://postgres:5432/orders", driver = "org.postgresql.Driver",
                 user = "postgres", password = "postgres")
 //            .connect("jdbc:postgresql://localhost:5432/orders", driver = "org.postgresql.Driver",
 //                user = "postgres", password = "postgres")
