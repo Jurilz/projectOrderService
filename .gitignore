@@ -6,3 +6,6 @@
 *.iml
 *.ipr
 *.iws
+
+# Ignore docker secrets
+secrets/*.secret

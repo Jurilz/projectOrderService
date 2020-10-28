@@ -9,10 +9,6 @@ buildscript {
     }
 }
 
-//plugins {
-//    id("com.github.johnrengelman.plugin-shadow") version "2.0.3"
-//}
-
 buildscript {
     repositories {
         maven {
@@ -20,7 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:6.0.0")
+        classpath("com.github.jengelman.gradle.plugins:shadow:$shadow_version")
     }
 }
 
@@ -61,8 +57,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    //Hikari Connection Pool
-    implementation group: 'com.zaxxer', name: 'HikariCP', version: '2.3.2'
+    // Cars
+    implementation "com.cars:docker-secrets:$dockerSecretsJavaVersion"
+    // Arkenenv
+    implementation "com.apurebase:arkenv:$arkenvVersion"
     // Exposed
     implementation "org.jetbrains.exposed:exposed-core:$exposed_version"
     implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"

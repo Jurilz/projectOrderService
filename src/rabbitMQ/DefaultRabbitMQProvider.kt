@@ -3,6 +3,7 @@ package com.orderService.rabbitMQ
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.orderService.Arguments
 import com.orderService.commands.Command
 import com.orderService.events.Event
 import com.orderService.events.orderEvents.OrderUpdatedEvent
@@ -31,8 +32,7 @@ class DefaultRabbitMQProvider(private val messageBroker: MessageBroker): RabbitP
 
     init {
         connectionFactory = ConnectionFactory()
-        //TODO: look at this
-        connectionFactory.host = "rabbitmq"
+        connectionFactory.host = Arguments.rabbitHost
         val newConnection: Connection = this.connectionFactory.newConnection()
         channel = newConnection.createChannel()
         channel.exchangeDeclare(GENERAL_EXCHANGE, TYPE_DIRECT, true)

@@ -8,8 +8,6 @@ import com.orderService.messages.Subscriber
 
 interface OrderProjector {
 
-    suspend fun project(event: Event)
-
     suspend fun addOrder(orderCreatedEvent: OrderCreatedEvent)
 
     suspend fun updateOrder(orderUpdatedEvent: OrderUpdatedEvent)

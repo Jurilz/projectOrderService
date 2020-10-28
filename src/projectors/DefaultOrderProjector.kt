@@ -7,10 +7,6 @@ import com.orderService.repository.OrderReadRepository
 
 class DefaultOrderProjector(private val orderReadRepository: OrderReadRepository): OrderProjector {
 
-    override suspend fun project(event: Event) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun addOrder(orderCreatedEvent: OrderCreatedEvent) {
         val order: Order = orderCreatedEvent.orderEvent.buildOrder()
         orderReadRepository.insert(order)
