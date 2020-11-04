@@ -42,12 +42,13 @@ fun Application.module(testing: Boolean = false) {
         method(HttpMethod.Options)
         method(HttpMethod.Put)
         method(HttpMethod.Delete)
+        method(HttpMethod.Get)
         method(HttpMethod.Patch)
-        header(HttpHeaders.Authorization)
+//        header(HttpHeaders.Authorization)
         header(HttpHeaders.AccessControlAllowHeaders)
         header(HttpHeaders.ContentType)
         header(HttpHeaders.AccessControlAllowOrigin)
-        header("MyCustomHeader")
+//        header("MyCustomHeader")
         allowCredentials = true
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }

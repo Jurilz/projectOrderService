@@ -18,7 +18,7 @@ fun Order.buildOrderCommand(): OrderCommand {
         productName = this.productName,
         amount = this.amount,
         customerName = this.customerName,
-        address = this.customerName,
+        address = this.address,
         lastModified = this.lastModified,
         state = this.state
     )

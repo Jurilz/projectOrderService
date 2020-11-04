@@ -25,13 +25,26 @@ fun OrderEvent.buildOrderEvent(state: String): OrderCommand {
     )
 }
 
+private val OrderEvent.order: Order
+    get() {
+        return Order(
+            orderId = this.orderId,
+            productName = this.productName,
+            amount = this.amount,
+            customerName = this.customerName,
+            address = this.address,
+            lastModified = this.lastModified,
+            state = this.state
+        )
+    }
+
 fun OrderEvent.buildOrder(): Order {
     return Order(
         orderId = this.orderId,
         productName = this.productName,
         amount = this.amount,
         customerName = this.customerName,
-        address = this.customerName,
+        address = this.address,
         lastModified = this.lastModified,
         state = this.state
     )
